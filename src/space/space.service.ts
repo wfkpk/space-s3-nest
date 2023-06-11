@@ -23,6 +23,29 @@ export class SpaceService {
     if (!allowedFormats.includes(file.mimetype)) {
       throw new Error('Invalid file format');
     }
+    const key = `${uuidv4()}.${file.mimetype.split('/')[1]}`;
+    const params = {
+      Bucket: 'spacefile',
+      Key: key,
+      Body: file.buffer,
+      ACL: 'public-read',
+      ContentType: file.mimetype,
+    };
+    const imageURL = `https://spacefile.sgp1.digitaloceanspaces.com/${key}`;
+    return new Promise((resolve, reject) => {
+      this.s3.putObject(params, (err) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(imageURL);
+      });
+    });
+  }
+  async uploadProfilePicture(file: Express.Multer.File): Promise<string> {
+    const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedFormats.includes(file.mimetype)) {
+      throw new Error('Invalid file format');
+    }
     const key = `profile/${uuidv4()}.${file.mimetype.split('/')[1]}`;
     const params = {
       Bucket: 'spacefile',

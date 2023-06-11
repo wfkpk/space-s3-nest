@@ -44,6 +44,9 @@ export class SpaceController {
   async uploadImage(
     @UploadedFile() file: Express.Multer.File,
   ): Promise<string> {
+    if (file.size > 1024 * 1024) {
+      throw new BadRequestException('File too large');
+    }
     return this.spaceService.uploadFile(file);
   }
 }
