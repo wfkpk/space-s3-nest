@@ -3,9 +3,13 @@ import {
   Controller,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileInterceptor,
+  FileFieldsInterceptor,
+} from '@nestjs/platform-express';
 import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { SpaceService } from './space.service';
 
@@ -14,7 +18,7 @@ import { SpaceService } from './space.service';
 export class SpaceController {
   constructor(private readonly spaceService: SpaceService) {}
 
-  @Post('/aws/upload')
+  @Post('/upload')
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: (req, file, cb) => {
@@ -49,4 +53,30 @@ export class SpaceController {
     }
     return this.spaceService.uploadFile(file);
   }
+
+
+  //THINKING OF HOW CAN I HANDLE MULTIPLE FILE UPLOAD FOR EVERY POST STILL COUDNT FIGURE OUT LETS SEE
+  
+
+
+
+  // @Post('post')
+  // @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 5 }]))
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     maximum: 5,
+  //     properties: {
+  //       image: {
+  //         type: 'string',
+  //         format: 'binary',
+  //         maximum: 5,
+  //       },
+  //     },
+  //   },
+  // })
+  // async uploadPost(@UploadedFiles() files: Express.Multer.File[]) {
+  //   console.log(files);
+  // }
 }
